@@ -6,7 +6,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+
 import org.json.*;
 import com.google.gson.*;
 
@@ -31,9 +34,27 @@ public class Main {
         JsonObject rootObject = rootElement.getAsJsonObject();
         JsonArray worldXArray = rootObject.get("world_x").getAsJsonArray();
 
-        System.out.println(worldXArray.get(1));
+        if (cityList == null) {
+            cityList = new ArrayList<>();
+            for (int i = 0; i < worldXArray.size(); i++) {
+                City city = new City(
 
+                        ((JsonObject) worldXArray.get(i)).get("pop").getAsInt(),
+                        ((JsonObject) worldXArray.get(i)).get("code").getAsString(),
+                        ((JsonObject) worldXArray.get(i)).get("district").getAsString(),
+                        ((JsonObject) worldXArray.get(i)).get("name").getAsString());
 
+                cityList.add(city);
+            }
+        }
+
+        PredicateFromNLD<String> predicateFromNLD = new PredicateFromNLD<>();
+        Predicate<City> lambdaPredicate = city -> city.getPop() > 100000;
+
+        /*
+         * Predicate chaining/composing
+         */
+        cityList.stream().filter(predicateFromNLD.and(lambdaPredicate)).forEach(System.out::println);
 
     }
 }
