@@ -21,7 +21,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         URL url = new URL(dataUrl);
-        JsonParser jsonParser = new JsonParser();
 
         URLConnection urlConnection = url.openConnection();
         urlConnection.connect();
@@ -30,8 +29,8 @@ public class Main {
          * https://stackoverflow.com/questions/4308554/simplest-way-to-read-json-from-a-url-in-java/4308662
          */
 
-        JsonElement rootElement = jsonParser.parse(new InputStreamReader((InputStream) urlConnection.getContent()));
-        JsonObject rootObject = rootElement.getAsJsonObject();
+
+        JsonObject rootObject = JsonParser.parseReader(new InputStreamReader((InputStream) urlConnection.getContent())).getAsJsonObject();
         JsonArray worldXArray = rootObject.get("world_x").getAsJsonArray();
 
         if (cityList == null) {
